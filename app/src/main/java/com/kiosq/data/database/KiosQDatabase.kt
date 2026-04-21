@@ -8,6 +8,9 @@ import com.kiosq.data.dao.BarangDao
 import com.kiosq.data.dao.TransaksiDao
 import com.kiosq.data.entity.Barang
 import com.kiosq.data.entity.Transaksi
+import androidx.room.TypeConverters
+
+
 
 @Database(
     entities = [Barang::class, Transaksi::class],
@@ -30,7 +33,7 @@ abstract class KiosQDatabase : RoomDatabase() {
                     KiosQDatabase::class.java,
                     "kiosq_database"
                 ).fallbackToDestructiveMigration()
-                    .build()
+                 .build()
 
                 INSTANCE = instance
                 instance
