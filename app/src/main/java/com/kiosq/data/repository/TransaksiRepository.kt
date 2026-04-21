@@ -11,15 +11,15 @@ class TransaksiRepository(private val transaksiDao: TransaksiDao) {
 
     val allTransaksi: LiveData<List<Transaksi>> = transaksiDao.getAllTransaksi()
     val transaksiJual: LiveData<List<Transaksi>> = transaksiDao.getTransaksiJual()
-    val totalPendapatan: LiveData<Long?> = transaksiDao.getTotalPendapatan()
+    val totalPendapatan: LiveData<Long> = transaksiDao.getTotalPendapatan()
     val totalTransaksiJual: LiveData<Int> = transaksiDao.getTotalTransaksiJual()
-    val barangTerlaris: LiveData<String?> = transaksiDao.getBarangTerlaris()
+    val barangTerlaris: LiveData<String> = transaksiDao.getBarangTerlaris()
     val countAllTransaksi: LiveData<Int> = transaksiDao.countAllTransaksi()
 
     fun getTransaksiByRange(start: Long, end: Long): LiveData<List<Transaksi>> =
         transaksiDao.getTransaksiByRange(start, end)
 
-    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long?> =
+    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long> =
         transaksiDao.getTotalPendapatanSince(startMillis)
 
     fun getTransaksiByBarang(barangId: Long): LiveData<List<Transaksi>> =
