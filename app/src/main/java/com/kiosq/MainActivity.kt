@@ -1,29 +1,48 @@
-package com.kiosq
+package com.kiosq.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.kiosq.ui.theme.KiosqTheme
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.kiosq.R
+import com.kiosq.databinding.ActivityMainBinding
 
-class MainActivity : ComponentActivity() {
-    // Lazy-initialize the database
-    val database: KiosQDatabase by lazy {
-        KiosQDatabase.getInstance(this)
-}
-override fun onCreate() {
-        super.onCreate()
-        // Pre-warm DB on background thread
-        Thread {
-            database.openHelper.writableDatabase
-        }.start()
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+        navController = navHostFragment.navController
+
+        binding.bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.barangFragment,
+                R.id.transaksiFragment,
+                R.id.statistikFragment,
+                R.id.backupFragment -> {
+                    binding.bottomNav.visibility = View.VISIBLE
+                }
+                else -> {
+                    binding.bottomNav.visibility = View.GONE
+                }
+            }
+        }
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
 }
