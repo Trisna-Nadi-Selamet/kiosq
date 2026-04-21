@@ -1,13 +1,12 @@
 package com.kiosq.data.repository
 
 import androidx.lifecycle.LiveData
-import com.kiosq.data.dao.BarangDao
 import com.kiosq.data.entity.Barang
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class BarangRepository(
-    private val barangDao: BarangDao
+    private val barangDao: `BarangDao.kt`
 ) {
 
     val allBarang: LiveData<List<Barang>> = barangDao.getAllBarang()
