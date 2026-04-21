@@ -20,11 +20,12 @@ abstract class KiosQDatabase : RoomDatabase() {
     abstract fun transaksiDao(): TransaksiDao
 
     companion object {
+
         @Volatile
-        private var INSTANCE: KiosQDatabase = null
+        private var INSTANCE: KiosQDatabase? = null
 
         fun getInstance(context: Context): KiosQDatabase {
-            return INSTANCE : synchronized(this) {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     KiosQDatabase::class.java,
@@ -32,6 +33,7 @@ abstract class KiosQDatabase : RoomDatabase() {
                 )
                     .fallbackToDestructiveMigration()
                     .build()
+
                 INSTANCE = instance
                 instance
             }
