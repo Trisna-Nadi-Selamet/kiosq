@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.kiosq.data.dao.BarangDao
 import com.kiosq.data.dao.TransaksiDao
 import com.kiosq.data.entity.Barang
 import com.kiosq.data.entity.Transaksi
@@ -21,7 +22,7 @@ abstract class KiosQDatabase : RoomDatabase() {
     companion object {
 
         @Volatile
-        private var INSTANCE: KiosQDatabase = null
+        private var INSTANCE: KiosQDatabase? = null
 
         fun getInstance(context: Context): KiosQDatabase {
             return INSTANCE ?: synchronized(this) {
