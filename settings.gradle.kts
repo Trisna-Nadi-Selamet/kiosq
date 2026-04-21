@@ -13,5 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
+
+
 rootProject.name = "KiosQ"
 include ':app'
