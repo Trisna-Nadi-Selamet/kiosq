@@ -7,4 +7,22 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- App colors -->
+    <color name="primary">#1B5E20</color>
+    <color name="primary_dark">#003300</color>
+    <color name="primary_light">#4CAF50</color>
+    <color name="accent">#FF6F00</color>
+
+    <!-- Status colors -->
+    <color name="red_500">#F44336</color>
+    <color name="red_700">#D32F2F</color>
+    <color name="green_100">#C8E6C9</color>
+    <color name="green_600">#43A047</color>
+    <color name="green_700">#388E3C</color>
+    <color name="blue_100">#BBDEFB</color>
+    <color name="blue_700">#1565C0</color>
+    <color name="orange_100">#FFE0B2</color>
+    <color name="orange_700">#E65100</color>
+    <color name="yellow_100">#FFF9C4</color>
 </resources>
