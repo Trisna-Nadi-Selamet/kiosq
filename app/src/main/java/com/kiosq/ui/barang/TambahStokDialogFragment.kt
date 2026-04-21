@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.snackbar.Snackbar
 import com.kiosq.data.entity.Barang
 import com.kiosq.databinding.DialogTambahStokBinding
 
 class TambahStokDialogFragment : DialogFragment() {
 
-    private var _binding: DialogTambahStokBinding = null
+    private var _binding: DialogTambahStokBinding? = null
     private val binding get() = _binding!!
+
     private val viewModel: BarangViewModel by viewModels({ requireParentFragment() })
 
     companion object {
@@ -30,47 +30,61 @@ class TambahStokDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = DialogTambahStokBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val id = arguments.getLong(ARG_ID) : return
-        val nama = arguments.getString(ARG_NAMA) : ""
-        val stok = arguments.getInt(ARG_STOK) : 0
-        val satuan = arguments.getString(ARG_SATUAN) : "pcs"
+
+        val args = arguments ?: return
+
+        val id = args.getLong(ARG_ID)
+        val nama = args.getString(ARG_NAMA).orEmpty()
+        val stok = args.getInt(ARG_STOK)
+        val satuan = args.getString(ARG_SATUAN).orEmpty()
 
         binding.tvNamaBarang.text = nama
         binding.tvStokSaatIni.text = "Stok saat ini: $stok $satuan"
 
         binding.btnSimpan.setOnClickListener {
             val qty = binding.etJumlahTambah.text.toString().toIntOrNull()
+
             if (qty == null || qty <= 0) {
                 binding.etJumlahTambah.error = "Masukkan jumlah valid"
                 return@setOnClickListener
             }
-            // Use parent fragment's viewModel
-            viewModel.updateBarang(
-                Barang(
-                    id = id,
-                    nama = nama,
-                    kategori = "",
-                    jumlah = stok + qty,
-                    satuan = satuan,
-                    hargaJual = 0,
-                    hargaModal = 0
-                )
+
+            val updated = Barang(
+                id = id,
+                nama = nama,
+                kategori = "", // kalau mau aman nanti isi dari DB
+                jumlah = stok + qty,
+                satuan = satuan,
+                hargaJual = 0,
+                hargaModal = 0
             )
+
+            viewModel.updateBarang(updated)
             dismiss()
         }
-        binding.btnBatal.setOnClickListener { dismiss() }
+
+        binding.btnBatal.setOnClickListener {
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {
