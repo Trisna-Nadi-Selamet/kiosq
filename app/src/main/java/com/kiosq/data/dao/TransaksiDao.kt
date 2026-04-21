@@ -2,7 +2,8 @@ package com.kiosq.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.kiosq.data.entity.TransaksiDao
+import com.kiosq.data.entity.Transaksi
+
 @Dao
 interface TransaksiDao {
 
@@ -32,7 +33,7 @@ interface TransaksiDao {
     """)
     suspend fun getTransaksiByRangeList(startMillis: Long, endMillis: Long): List<Transaksi>
 
-    // STATISTIK
+    // Statistik queries
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL'")
     fun getTotalPendapatan(): LiveData<Long>
 
@@ -43,10 +44,11 @@ interface TransaksiDao {
     fun getTotalTransaksiJual(): LiveData<Int>
 
     @Query("""
-        SELECT namaBarang 
+        SELECT namaBarang, SUM(jumlah) as totalJual 
         FROM transaksi 
+        WHERE jenis = 'JUAL' 
         GROUP BY namaBarang 
-        ORDER BY SUM(jumlah) DESC 
+        ORDER BY totalJual DESC 
         LIMIT 1
     """)
     fun getBarangTerlaris(): LiveData<String>
@@ -79,3 +81,8 @@ interface TransaksiDao {
     @Query("DELETE FROM transaksi")
     suspend fun deleteAllTransaksi()
 }
+
+data class NamaTotal(
+    val namaBarang: String,
+    val totalJual: Int
+)
