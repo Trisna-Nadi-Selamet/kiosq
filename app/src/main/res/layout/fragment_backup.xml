@@ -14,7 +14,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="💾 Backup & Restore"
+            app:title="💾 Backup &amp; Restore"
             app:titleTextColor="?attr/colorOnPrimary"
             android:background="?attr/colorPrimary" />
 
@@ -26,6 +26,7 @@
             style="@style/Widget.Material3.LinearProgressIndicator"
             android:visibility="gone" />
 
+        <!-- INFO BAR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,12 +43,16 @@
                 android:textColor="#2E7D32"
                 android:textStyle="bold" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRefresh"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="auto"
                 android:text="↻ Refresh"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -82,7 +87,6 @@
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:layout_marginBottom="8dp" />
 
-                <!-- File info -->
                 <TextView
                     android:id="@+id/tvBackupInfo"
                     android:layout_width="wrap_content"
