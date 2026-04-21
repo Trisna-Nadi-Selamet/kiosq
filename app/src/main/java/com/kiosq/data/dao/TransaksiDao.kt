@@ -1,3 +1,8 @@
+package com.kiosq.data.dao
+
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import com.kiosq.data.entity.TransaksiDao
 @Dao
 interface TransaksiDao {
 
