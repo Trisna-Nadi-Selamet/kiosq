@@ -23,7 +23,7 @@ data class Transaksi(
 
 data class TransaksiWithBarang(
     val transaksi: Transaksi,
-    val barang: Barang?
+    val barang: Barang
 )
 
 data class StatistikHarian(

@@ -11,16 +11,16 @@ import com.kiosq.util.FileHelper
 
 class BackupFragment : Fragment() {
 
-    private var _binding: FragmentBackupBinding? = null
+    private var _binding: FragmentBackupBinding = null
     private val binding get() = _binding!!
     private val viewModel: BackupViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
         _binding = FragmentBackupBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
         setupButtons()
         observeData()
@@ -32,7 +32,7 @@ class BackupFragment : Fragment() {
         binding.btnRestore.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Restore Data")
-                .setMessage("Semua data saat ini akan diganti dengan data backup. Lanjutkan?")
+                .setMessage("Semua data saat ini akan diganti dengan data backup. Lanjutkan")
                 .setPositiveButton("Restore") { _, _ -> viewModel.restoreData() }
                 .setNegativeButton("Batal", null)
                 .show()
@@ -62,7 +62,7 @@ class BackupFragment : Fragment() {
         }
 
         viewModel.operationResult.observe(viewLifecycleOwner) { msg ->
-            msg?.let {
+            msg.let {
                 Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
                 viewModel.clearResult()
             }
@@ -96,7 +96,7 @@ class BackupFragment : Fragment() {
         }
 
         viewModel.shareFile.observe(viewLifecycleOwner) { pair ->
-            pair?.let { (file, mime) ->
+            pair.let { (file, mime) ->
                 val intent = FileHelper.shareFile(requireContext(), file, mime)
                 startActivity(android.content.Intent.createChooser(intent, "Bagikan file via..."))
                 viewModel.clearShareFile()

@@ -16,15 +16,15 @@ class StatistikViewModel(application: Application) : AndroidViewModel(applicatio
     private val transaksiRepo: TransaksiRepository
 
     val countBarang: LiveData<Int>
-    val totalNilaiStok: LiveData<Long?>
-    val totalPendapatan: LiveData<Long?>
+    val totalNilaiStok: LiveData<Long>
+    val totalPendapatan: LiveData<Long>
     val totalTransaksi: LiveData<Int>
-    val barangTerlaris: LiveData<String?>
+    val barangTerlaris: LiveData<String>
     val stokRendah: LiveData<List<Barang>>
     val countStokRendah: LiveData<Int>
 
     // Pendapatan hari ini
-    val pendapatanHariIni: LiveData<Long?>
+    val pendapatanHariIni: LiveData<Long>
 
     private val _top5Terlaris = MutableLiveData<List<Pair<String, Int>>>()
     val top5Terlaris: LiveData<List<Pair<String, Int>>> = _top5Terlaris

@@ -19,17 +19,17 @@ import com.kiosq.util.FileHelper
 
 class BarangFragment : Fragment() {
 
-    private var _binding: FragmentBarangBinding? = null
+    private var _binding: FragmentBarangBinding = null
     private val binding get() = _binding!!
     private val viewModel: BarangViewModel by viewModels()
     private lateinit var adapter: BarangAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
         _binding = FragmentBarangBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupSearch()
@@ -52,9 +52,9 @@ class BarangFragment : Fragment() {
 
     private fun setupSearch() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?) = false
-            override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.search(newText ?: "")
+            override fun onQueryTextSubmit(query: String) = false
+            override fun onQueryTextChange(newText: String): Boolean {
+                viewModel.search(newText : "")
                 return true
             }
         })
@@ -93,14 +93,14 @@ class BarangFragment : Fragment() {
         }
 
         viewModel.operationResult.observe(viewLifecycleOwner) { msg ->
-            msg?.let {
+            msg.let {
                 Snackbar.make(binding.root, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.clearResult()
             }
         }
 
         viewModel.exportFile.observe(viewLifecycleOwner) { file ->
-            file?.let {
+            file.let {
                 val shareIntent = FileHelper.shareFile(requireContext(), it, "text/csv")
                 startActivity(android.content.Intent.createChooser(shareIntent, "Bagikan CSV"))
                 viewModel.clearExportFile()
@@ -130,7 +130,7 @@ class BarangFragment : Fragment() {
     }
 
     private fun showKategoriFilter() {
-        val items = viewModel.allKategori.value?.toTypedArray() ?: return
+        val items = viewModel.allKategori.value.toTypedArray() : return
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Filter Kategori")
             .setItems(items) { _, idx -> viewModel.filterByKategori(items[idx]) }
@@ -138,7 +138,7 @@ class BarangFragment : Fragment() {
             .show()
     }
 
-    private fun showBarangDialog(barang: Barang?) {
+    private fun showBarangDialog(barang: Barang) {
         val dialog = BarangDialogFragment.newInstance(barang)
         dialog.onSave = { newBarang ->
             if (barang == null) viewModel.insertBarang(newBarang)
@@ -150,7 +150,7 @@ class BarangFragment : Fragment() {
     private fun confirmDelete(barang: Barang) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Hapus Barang")
-            .setMessage("Hapus \"${barang.nama}\"?")
+            .setMessage("Hapus \"${barang.nama}\"")
             .setPositiveButton("Hapus") { _, _ -> viewModel.deleteBarang(barang) }
             .setNegativeButton("Batal", null)
             .show()

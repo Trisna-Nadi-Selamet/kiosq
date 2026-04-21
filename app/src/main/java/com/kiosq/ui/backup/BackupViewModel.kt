@@ -16,23 +16,23 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
     private val barangRepo: BarangRepository
     private val transaksiRepo: TransaksiRepository
 
-    private val _operationResult = MutableLiveData<String?>()
-    val operationResult: LiveData<String?> = _operationResult
+    private val _operationResult = MutableLiveData<String>()
+    val operationResult: LiveData<String> = _operationResult
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _backupInfo = MutableLiveData<FileInfo?>()
-    val backupInfo: LiveData<FileInfo?> = _backupInfo
+    private val _backupInfo = MutableLiveData<FileInfo>()
+    val backupInfo: LiveData<FileInfo> = _backupInfo
 
-    private val _csvBarangInfo = MutableLiveData<FileInfo?>()
-    val csvBarangInfo: LiveData<FileInfo?> = _csvBarangInfo
+    private val _csvBarangInfo = MutableLiveData<FileInfo>()
+    val csvBarangInfo: LiveData<FileInfo> = _csvBarangInfo
 
-    private val _csvTransaksiInfo = MutableLiveData<FileInfo?>()
-    val csvTransaksiInfo: LiveData<FileInfo?> = _csvTransaksiInfo
+    private val _csvTransaksiInfo = MutableLiveData<FileInfo>()
+    val csvTransaksiInfo: LiveData<FileInfo> = _csvTransaksiInfo
 
-    private val _shareFile = MutableLiveData<Pair<File, String>?>()
-    val shareFile: LiveData<Pair<File, String>?> = _shareFile
+    private val _shareFile = MutableLiveData<Pair<File, String>>()
+    val shareFile: LiveData<Pair<File, String>> = _shareFile
 
     init {
         val db = KiosQDatabase.getInstance(application)

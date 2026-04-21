@@ -20,15 +20,15 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
     val allBarang: LiveData<List<Barang>>
     val allTransaksi: LiveData<List<Transaksi>>
-    val totalPendapatan: LiveData<Long?>
+    val totalPendapatan: LiveData<Long>
     val totalTransaksi: LiveData<Int>
-    val barangTerlaris: LiveData<String?>
+    val barangTerlaris: LiveData<String>
 
-    private val _operationResult = MutableLiveData<String?>()
-    val operationResult: LiveData<String?> = _operationResult
+    private val _operationResult = MutableLiveData<String>()
+    val operationResult: LiveData<String> = _operationResult
 
-    private val _exportFile = MutableLiveData<File?>()
-    val exportFile: LiveData<File?> = _exportFile
+    private val _exportFile = MutableLiveData<File>()
+    val exportFile: LiveData<File> = _exportFile
 
     // Cart for multi-item transaction
     private val _cart = MutableLiveData<List<CartItem>>(emptyList())
@@ -51,7 +51,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun addToCart(barang: Barang, qty: Int, harga: Long) {
-        val current = _cart.value?.toMutableList() ?: mutableListOf()
+        val current = _cart.value.toMutableList() : mutableListOf()
         val existing = current.indexOfFirst { it.barang.id == barang.id }
         if (existing >= 0) {
             current[existing] = current[existing].copy(
@@ -64,13 +64,13 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun removeFromCart(barangId: Long) {
-        _cart.value = _cart.value?.filter { it.barang.id != barangId }
+        _cart.value = _cart.value.filter { it.barang.id != barangId }
     }
 
     fun clearCart() { _cart.value = emptyList() }
 
     fun prosesJual() = viewModelScope.launch {
-        val items = _cart.value ?: return@launch
+        val items = _cart.value : return@launch
         if (items.isEmpty()) {
             _operationResult.postValue("Keranjang kosong")
             return@launch

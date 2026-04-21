@@ -14,19 +14,19 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
 
     private val repository: BarangRepository
     private val _searchQuery = MutableLiveData<String>("")
-    private val _selectedKategori = MutableLiveData<String?>()
+    private val _selectedKategori = MutableLiveData<String>()
 
     val allBarang: LiveData<List<Barang>>
     val allKategori: LiveData<List<String>>
     val countBarang: LiveData<Int>
     val countStokRendah: LiveData<Int>
     val stokRendah: LiveData<List<Barang>>
-    val totalNilaiStok: LiveData<Long?>
+    val totalNilaiStok: LiveData<Long>
 
     val filteredBarang: LiveData<List<Barang>> = MediatorLiveData<List<Barang>>().apply {
         var allList = emptyList<Barang>()
         var query = ""
-        var kategori: String? = null
+        var kategori: String = null
 
         fun filterAndPost() {
             val filtered = allList.filter { b ->
@@ -39,11 +39,11 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private val _operationResult = MutableLiveData<String?>()
-    val operationResult: LiveData<String?> = _operationResult
+    private val _operationResult = MutableLiveData<String>()
+    val operationResult: LiveData<String> = _operationResult
 
-    private val _exportFile = MutableLiveData<File?>()
-    val exportFile: LiveData<File?> = _exportFile
+    private val _exportFile = MutableLiveData<File>()
+    val exportFile: LiveData<File> = _exportFile
 
     init {
         val db = KiosQDatabase.getInstance(application)
@@ -59,7 +59,7 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
         (filteredBarang as MediatorLiveData).apply {
             var allList = emptyList<Barang>()
             var query = ""
-            var kategori: String? = null
+            var kategori: String = null
 
             fun filterAndPost() {
                 val filtered = allList.filter { b ->
@@ -78,7 +78,7 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun search(query: String) { _searchQuery.value = query }
-    fun filterByKategori(kategori: String?) { _selectedKategori.value = kategori }
+    fun filterByKategori(kategori: String) { _selectedKategori.value = kategori }
 
     fun insertBarang(barang: Barang) = viewModelScope.launch {
         repository.insertBarang(barang)

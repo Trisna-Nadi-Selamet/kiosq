@@ -21,10 +21,10 @@ abstract class KiosQDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: KiosQDatabase? = null
+        private var INSTANCE: KiosQDatabase = null
 
         fun getInstance(context: Context): KiosQDatabase {
-            return INSTANCE ?: synchronized(this) {
+            return INSTANCE : synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     KiosQDatabase::class.java,

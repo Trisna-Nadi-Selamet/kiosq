@@ -16,18 +16,18 @@ import com.kiosq.util.FileHelper
 
 class TransaksiFragment : Fragment() {
 
-    private var _binding: FragmentTransaksiBinding? = null
+    private var _binding: FragmentTransaksiBinding = null
     private val binding get() = _binding!!
     private val viewModel: TransaksiViewModel by viewModels()
     private lateinit var transaksiAdapter: TransaksiAdapter
     private lateinit var cartAdapter: CartAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
         _binding = FragmentTransaksiBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
         setupTabs()
         setupCart()
@@ -40,14 +40,14 @@ class TransaksiFragment : Fragment() {
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Jual"))
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Riwayat"))
         binding.tabLayout.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
-                when (tab?.position) {
+            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab) {
+                when (tab.position) {
                     0 -> showJualPanel()
                     1 -> showRiwayatPanel()
                 }
             }
-            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
-            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
+            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
         })
     }
 
@@ -74,7 +74,7 @@ class TransaksiFragment : Fragment() {
         binding.btnProses.setOnClickListener { viewModel.prosesJual() }
         binding.btnClearCart.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Kosongkan Keranjang?")
+                .setTitle("Kosongkan Keranjang")
                 .setPositiveButton("Ya") { _, _ -> viewModel.clearCart() }
                 .setNegativeButton("Batal", null)
                 .show()
@@ -117,18 +117,18 @@ class TransaksiFragment : Fragment() {
         }
 
         viewModel.totalPendapatan.observe(viewLifecycleOwner) { total ->
-            binding.tvTotalPendapatan.text = "Total Pendapatan: ${CurrencyFormatter.format(total ?: 0)}"
+            binding.tvTotalPendapatan.text = "Total Pendapatan: ${CurrencyFormatter.format(total : 0)}"
         }
 
         viewModel.operationResult.observe(viewLifecycleOwner) { msg ->
-            msg?.let {
+            msg.let {
                 Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
                 viewModel.clearResult()
             }
         }
 
         viewModel.exportFile.observe(viewLifecycleOwner) { file ->
-            file?.let {
+            file.let {
                 val intent = FileHelper.shareFile(requireContext(), it, "text/csv")
                 startActivity(android.content.Intent.createChooser(intent, "Bagikan CSV Transaksi"))
                 viewModel.clearExportFile()
@@ -137,7 +137,7 @@ class TransaksiFragment : Fragment() {
     }
 
     private fun showPilihBarangDialog() {
-        val barangList = viewModel.allBarang.value ?: emptyList()
+        val barangList = viewModel.allBarang.value : emptyList()
         if (barangList.isEmpty()) {
             Snackbar.make(binding.root, "Belum ada barang. Tambah barang terlebih dahulu.", Snackbar.LENGTH_SHORT).show()
             return
@@ -162,7 +162,7 @@ class TransaksiFragment : Fragment() {
             .setTitle("Jumlah")
             .setView(dialogView)
             .setPositiveButton("Tambah") { _, _ ->
-                val qty = etQty.text.toString().toIntOrNull() ?: 1
+                val qty = etQty.text.toString().toIntOrNull() : 1
                 if (qty > barang.jumlah) {
                     Snackbar.make(binding.root, "Stok tidak cukup!", Snackbar.LENGTH_SHORT).show()
                 } else {

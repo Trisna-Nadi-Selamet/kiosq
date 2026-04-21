@@ -11,11 +11,11 @@ import com.kiosq.util.CurrencyFormatter
 
 class BarangDialogFragment : DialogFragment() {
 
-    private var _binding: DialogBarangBinding? = null
+    private var _binding: DialogBarangBinding = null
     private val binding get() = _binding!!
 
-    var onSave: ((Barang) -> Unit)? = null
-    private var existingBarang: Barang? = null
+    var onSave: ((Barang) -> Unit)= null
+    private var existingBarang: Barang= null
 
     companion object {
         private const val ARG_BARANG_ID = "barang_id"
@@ -26,9 +26,9 @@ class BarangDialogFragment : DialogFragment() {
         private const val ARG_HARGA_JUAL = "harga_jual"
         private const val ARG_HARGA_MODAL = "harga_modal"
 
-        fun newInstance(barang: Barang?): BarangDialogFragment {
+        fun newInstance(barang: Barang): BarangDialogFragment {
             return BarangDialogFragment().apply {
-                barang?.let {
+                barang.let {
                     arguments = Bundle().apply {
                         putLong(ARG_BARANG_ID, it.id)
                         putString(ARG_NAMA, it.nama)
@@ -44,17 +44,17 @@ class BarangDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
         _binding = DialogBarangBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
 
         // Setup Satuan Spinner
@@ -64,7 +64,7 @@ class BarangDialogFragment : DialogFragment() {
         binding.spinnerSatuan.adapter = satuanAdapter
 
         // Pre-fill if editing
-        arguments?.let { args ->
+        arguments.let { args ->
             existingBarang = Barang(
                 id = args.getLong(ARG_BARANG_ID),
                 nama = args.getString(ARG_NAMA, ""),
@@ -84,7 +84,7 @@ class BarangDialogFragment : DialogFragment() {
                 val idx = satuanList.indexOf(existingBarang!!.satuan.lowercase())
                 if (idx >= 0) spinnerSatuan.setSelection(idx)
             }
-        } ?: run {
+        } : run {
             binding.tvDialogTitle.text = "Tambah Barang"
         }
 
@@ -107,15 +107,15 @@ class BarangDialogFragment : DialogFragment() {
         if (hargaModalStr.isBlank()) { binding.etHargaModal.error = "Harga modal wajib diisi"; return }
 
         val barang = Barang(
-            id = existingBarang?.id ?: 0,
+            id = existingBarang.id : 0,
             nama = nama,
             kategori = kategori,
-            jumlah = jumlahStr.toIntOrNull() ?: 0,
+            jumlah = jumlahStr.toIntOrNull() : 0,
             satuan = satuan,
-            hargaJual = hargaJualStr.toLongOrNull() ?: 0,
-            hargaModal = hargaModalStr.toLongOrNull() ?: 0
+            hargaJual = hargaJualStr.toLongOrNull() : 0,
+            hargaModal = hargaModalStr.toLongOrNull() : 0
         )
-        onSave?.invoke(barang)
+        onSave.invoke(barang)
         dismiss()
     }
 

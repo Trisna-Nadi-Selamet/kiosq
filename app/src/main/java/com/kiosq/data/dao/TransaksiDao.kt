@@ -14,7 +14,7 @@ interface TransaksiDao {
     suspend fun getAllTransaksiList(): List<Transaksi>
 
     @Query("SELECT * FROM transaksi WHERE id = :id")
-    suspend fun getTransaksiById(id: Long): Transaksi?
+    suspend fun getTransaksiById(id: Long): Transaksi
 
     @Query("SELECT * FROM transaksi WHERE jenis = 'JUAL' ORDER BY createdAt DESC")
     fun getTransaksiJual(): LiveData<List<Transaksi>>
@@ -35,10 +35,10 @@ interface TransaksiDao {
 
     // Statistik queries
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL'")
-    fun getTotalPendapatan(): LiveData<Long?>
+    fun getTotalPendapatan(): LiveData<Long>
 
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL' AND createdAt >= :startMillis")
-    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long?>
+    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long>
 
     @Query("SELECT COUNT(*) FROM transaksi WHERE jenis = 'JUAL'")
     fun getTotalTransaksiJual(): LiveData<Int>

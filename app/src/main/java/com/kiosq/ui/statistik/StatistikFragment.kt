@@ -10,17 +10,17 @@ import com.kiosq.util.CurrencyFormatter
 
 class StatistikFragment : Fragment() {
 
-    private var _binding: FragmentStatistikBinding? = null
+    private var _binding: FragmentStatistikBinding = null
     private val binding get() = _binding!!
     private val viewModel: StatistikViewModel by viewModels()
     private lateinit var stokRendahAdapter: StokRendahAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
         _binding = FragmentStatistikBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
         setupStokRendahList()
         observeData()
@@ -40,15 +40,15 @@ class StatistikFragment : Fragment() {
         }
 
         viewModel.totalNilaiStok.observe(viewLifecycleOwner) {
-            binding.tvNilaiStok.text = CurrencyFormatter.format(it ?: 0)
+            binding.tvNilaiStok.text = CurrencyFormatter.format(it : 0)
         }
 
         viewModel.totalPendapatan.observe(viewLifecycleOwner) {
-            binding.tvTotalPendapatan.text = CurrencyFormatter.format(it ?: 0)
+            binding.tvTotalPendapatan.text = CurrencyFormatter.format(it : 0)
         }
 
         viewModel.pendapatanHariIni.observe(viewLifecycleOwner) {
-            binding.tvPendapatanHariIni.text = CurrencyFormatter.format(it ?: 0)
+            binding.tvPendapatanHariIni.text = CurrencyFormatter.format(it : 0)
         }
 
         viewModel.totalTransaksi.observe(viewLifecycleOwner) {
@@ -56,7 +56,7 @@ class StatistikFragment : Fragment() {
         }
 
         viewModel.barangTerlaris.observe(viewLifecycleOwner) {
-            binding.tvBarangTerlaris.text = it ?: "-"
+            binding.tvBarangTerlaris.text = it : "-"
         }
 
         viewModel.countStokRendah.observe(viewLifecycleOwner) { count ->
@@ -81,7 +81,7 @@ class StatistikFragment : Fragment() {
         binding.layoutChart.visibility = View.VISIBLE
         binding.chartContainer.removeAllViews()
 
-        val maxVal = data.maxOfOrNull { it.second } ?: 1
+        val maxVal = data.maxOfOrNull { it.second } : 1
         val ctx = requireContext()
 
         data.forEachIndexed { idx, (nama, total) ->

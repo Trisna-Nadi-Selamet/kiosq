@@ -13,7 +13,7 @@ class BarangRepository(private val barangDao: BarangDao) {
     val countBarang: LiveData<Int> = barangDao.countAllBarang()
     val countStokRendah: LiveData<Int> = barangDao.countStokRendah()
     val stokRendah: LiveData<List<Barang>> = barangDao.getStokRendah()
-    val totalNilaiStok: LiveData<Long?> = barangDao.getTotalNilaiStok()
+    val totalNilaiStok: LiveData<Long> = barangDao.getTotalNilaiStok()
 
     fun searchBarang(query: String): LiveData<List<Barang>> = barangDao.searchBarang(query)
     fun getByKategori(kategori: String): LiveData<List<Barang>> = barangDao.getBarangByKategori(kategori)
@@ -22,7 +22,7 @@ class BarangRepository(private val barangDao: BarangDao) {
         barangDao.getAllBarangList()
     }
 
-    suspend fun getBarangById(id: Long): Barang? = withContext(Dispatchers.IO) {
+    suspend fun getBarangById(id: Long): Barang = withContext(Dispatchers.IO) {
         barangDao.getBarangById(id)
     }
 

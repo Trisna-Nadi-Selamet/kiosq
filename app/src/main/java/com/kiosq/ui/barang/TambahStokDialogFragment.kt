@@ -10,7 +10,7 @@ import com.kiosq.databinding.DialogTambahStokBinding
 
 class TambahStokDialogFragment : DialogFragment() {
 
-    private var _binding: DialogTambahStokBinding? = null
+    private var _binding: DialogTambahStokBinding = null
     private val binding get() = _binding!!
     private val viewModel: BarangViewModel by viewModels({ requireParentFragment() })
 
@@ -30,22 +30,22 @@ class TambahStokDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View {
         _binding = DialogTambahStokBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
-        val id = arguments?.getLong(ARG_ID) ?: return
-        val nama = arguments?.getString(ARG_NAMA) ?: ""
-        val stok = arguments?.getInt(ARG_STOK) ?: 0
-        val satuan = arguments?.getString(ARG_SATUAN) ?: "pcs"
+        val id = arguments.getLong(ARG_ID) : return
+        val nama = arguments.getString(ARG_NAMA) : ""
+        val stok = arguments.getInt(ARG_STOK) : 0
+        val satuan = arguments.getString(ARG_SATUAN) : "pcs"
 
         binding.tvNamaBarang.text = nama
         binding.tvStokSaatIni.text = "Stok saat ini: $stok $satuan"
