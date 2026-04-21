@@ -1,6 +1,7 @@
 package com.kiosq.ui.barang
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -18,8 +19,13 @@ class BarangAdapter(
 ) : ListAdapter<Barang, BarangAdapter.ViewHolder>(DiffCallback) {
 
     companion object DiffCallback : DiffUtil.ItemCallback<Barang>() {
-        override fun areItemsTheSame(a: Barang, b: Barang) = a.id == b.id
-        override fun areContentsTheSame(a: Barang, b: Barang) = a == b
+        override fun areItemsTheSame(oldItem: Barang, newItem: Barang): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Barang, newItem: Barang): Boolean {
+            return oldItem == newItem
+        }
     }
 
     inner class ViewHolder(private val binding: ItemBarangBinding) :
@@ -27,35 +33,46 @@ class BarangAdapter(
 
         fun bind(barang: Barang) {
             binding.apply {
+
                 tvNama.text = barang.nama
                 tvKategori.text = barang.kategori
                 tvStok.text = "${barang.jumlah} ${barang.satuan}"
                 tvHargaJual.text = CurrencyFormatter.format(barang.hargaJual)
                 tvHargaModal.text = "Modal: ${CurrencyFormatter.format(barang.hargaModal)}"
-                tvProfit.text = "Profit: ${CurrencyFormatter.format(barang.profit)} (${
-                    String.format("%.0f", barang.profitPersen)
-                }%)"
 
-                // Warna stok rendah
+                val profitText = "Profit: ${CurrencyFormatter.format(barang.profit)} " +
+                        "(${String.format("%.0f", barang.profitPersen)}%)"
+                tvProfit.text = profitText
+
                 val ctx = root.context
+
                 if (barang.jumlah <= 5) {
-                    tvStok.setTextColor(ContextCompat.getColor(ctx, R.color.red_500))
-                    chipStokRendah.visibility = android.view.View.VISIBLE
+                    tvStok.setTextColor(
+                        ContextCompat.getColor(ctx, R.color.red_500)
+                    )
+                    chipStokRendah.visibility = View.VISIBLE
                 } else {
-                    tvStok.setTextColor(ContextCompat.getColor(ctx, R.color.green_600))
-                    chipStokRendah.visibility = android.view.View.GONE
+                    tvStok.setTextColor(
+                        ContextCompat.getColor(ctx, R.color.green_600)
+                    )
+                    chipStokRendah.visibility = View.GONE
                 }
 
                 btnEdit.setOnClickListener { onEdit(barang) }
                 btnDelete.setOnClickListener { onDelete(barang) }
                 btnTambahStok.setOnClickListener { onTambahStok(barang) }
+
                 root.setOnClickListener { onEdit(barang) }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemBarangBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemBarangBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ViewHolder(binding)
     }
 

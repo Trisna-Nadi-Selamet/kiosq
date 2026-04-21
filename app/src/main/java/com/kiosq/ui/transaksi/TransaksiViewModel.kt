@@ -30,11 +30,10 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     private val _exportFile = MutableLiveData<File>()
     val exportFile: LiveData<File> = _exportFile
 
-    // Cart for multi-item transaction
     private val _cart = MutableLiveData<List<CartItem>>(emptyList())
     val cart: LiveData<List<CartItem>> = _cart
 
-    val cartTotal: LiveData<Long> = _cart.map { items ->
+    val cartTotal: LiveData<Long> = Transformations.map(_cart) { items ->
         items.sumOf { it.subtotal }
     }
 
@@ -51,50 +50,57 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun addToCart(barang: Barang, qty: Int, harga: Long) {
-        val current = _cart.value.toMutableList() : mutableListOf()
-        val existing = current.indexOfFirst { it.barang.id == barang.id }
-        if (existing >= 0) {
-            current[existing] = current[existing].copy(
-                qty = current[existing].qty + qty
-            )
+
+        val current = _cart.value ?: emptyList()
+        val mutable = current.toMutableList()
+
+        val index = mutable.indexOfFirst { it.barang.id == barang.id }
+
+        if (index >= 0) {
+            val old = mutable[index]
+            mutable[index] = old.copy(qty = old.qty + qty)
         } else {
-            current.add(CartItem(barang, qty, harga))
+            mutable.add(CartItem(barang, qty, harga))
         }
-        _cart.value = current
+
+        _cart.value = mutable
     }
 
     fun removeFromCart(barangId: Long) {
-        _cart.value = _cart.value.filter { it.barang.id != barangId }
+        _cart.value = _cart.value?.filter { it.barang.id != barangId } ?: emptyList()
     }
 
-    fun clearCart() { _cart.value = emptyList() }
+    fun clearCart() {
+        _cart.value = emptyList()
+    }
 
     fun prosesJual() = viewModelScope.launch {
-        val items = _cart.value : return@launch
+
+        val items = _cart.value ?: emptyList()
+
         if (items.isEmpty()) {
             _operationResult.postValue("Keranjang kosong")
             return@launch
         }
 
-        var success = true
-        items.forEach { item ->
+        for (item in items) {
+
             val barang = barangRepo.getBarangById(item.barang.id)
+
             if (barang == null) {
                 _operationResult.postValue("Barang ${item.barang.nama} tidak ditemukan")
-                success = false
-                return@forEach
+                return@launch
             }
+
             if (barang.jumlah < item.qty) {
                 _operationResult.postValue("Stok ${barang.nama} tidak cukup (tersisa ${barang.jumlah})")
-                success = false
-                return@forEach
+                return@launch
             }
         }
 
-        if (!success) return@launch
-
         items.forEach { item ->
             barangRepo.kurangiStok(item.barang.id, item.qty)
+
             transaksiRepo.insertTransaksi(
                 Transaksi(
                     barangId = item.barang.id,
@@ -107,13 +113,18 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 )
             )
         }
+
+        val total = items.sumOf { it.subtotal }
+
         clearCart()
-        _operationResult.postValue("Transaksi berhasil! Total: ${items.sumOf { it.subtotal }}")
+        _operationResult.postValue("Transaksi berhasil! Total: $total")
     }
 
     fun prosesBeli(barang: Barang, qty: Int, hargaBeli: Long, catatan: String = "") =
         viewModelScope.launch {
+
             barangRepo.tambahStok(barang.id, qty)
+
             transaksiRepo.insertTransaksi(
                 Transaksi(
                     barangId = barang.id,
@@ -125,23 +136,34 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                     catatan = catatan
                 )
             )
+
             _operationResult.postValue("Stok ${barang.nama} ditambah $qty")
         }
 
     fun exportCsv() = viewModelScope.launch(Dispatchers.IO) {
+
         val list = transaksiRepo.getAllTransaksiList()
+
         FileHelper.exportTransaksiCsv(getApplication(), list)
             .onSuccess { file ->
                 _exportFile.postValue(file)
                 _operationResult.postValue("Export berhasil: ${file.name}")
             }
-            .onFailure { _operationResult.postValue("Export gagal: ${it.message}") }
+            .onFailure {
+                _operationResult.postValue("Export gagal: ${it.message}")
+            }
     }
 
-    fun clearResult() { _operationResult.value = null }
-    fun clearExportFile() { _exportFile.value = null }
+    fun clearResult() {
+        _operationResult.value = null
+    }
+
+    fun clearExportFile() {
+        _exportFile.value = null
+    }
 }
 
+// ================= CART ITEM =================
 data class CartItem(
     val barang: Barang,
     val qty: Int,

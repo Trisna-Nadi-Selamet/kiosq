@@ -1,9 +1,3 @@
-package com.kiosq.data.dao
-
-import androidx.lifecycle.LiveData
-import androidx.room.*
-import com.kiosq.data.entity.Transaksi
-
 @Dao
 interface TransaksiDao {
 
@@ -14,7 +8,7 @@ interface TransaksiDao {
     suspend fun getAllTransaksiList(): List<Transaksi>
 
     @Query("SELECT * FROM transaksi WHERE id = :id")
-    suspend fun getTransaksiById(id: Long): Transaksi
+    suspend fun getTransaksiById(id: Long): Transaksi?
 
     @Query("SELECT * FROM transaksi WHERE jenis = 'JUAL' ORDER BY createdAt DESC")
     fun getTransaksiJual(): LiveData<List<Transaksi>>
@@ -33,24 +27,24 @@ interface TransaksiDao {
     """)
     suspend fun getTransaksiByRangeList(startMillis: Long, endMillis: Long): List<Transaksi>
 
-    // Statistik queries
+    // STATISTIK
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL'")
-    fun getTotalPendapatan(): LiveData<Long>
+    fun getTotalPendapatan(): LiveData<Long?>
 
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL' AND createdAt >= :startMillis")
-    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long>
+    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long?>
 
     @Query("SELECT COUNT(*) FROM transaksi WHERE jenis = 'JUAL'")
     fun getTotalTransaksiJual(): LiveData<Int>
 
     @Query("""
-    SELECT namaBarang 
-    FROM transaksi 
-    GROUP BY namaBarang 
-    ORDER BY SUM(jumlah) DESC 
-    LIMIT 1
-""")
-fun getBarangTerlaris(): LiveData<String>
+        SELECT namaBarang 
+        FROM transaksi 
+        GROUP BY namaBarang 
+        ORDER BY SUM(jumlah) DESC 
+        LIMIT 1
+    """)
+    fun getBarangTerlaris(): LiveData<String?>
 
     @Query("""
         SELECT namaBarang, SUM(jumlah) as totalJual 
@@ -80,8 +74,3 @@ fun getBarangTerlaris(): LiveData<String>
     @Query("DELETE FROM transaksi")
     suspend fun deleteAllTransaksi()
 }
-
-data class NamaTotal(
-    val namaBarang: String,
-    val totalJual: Int
-)

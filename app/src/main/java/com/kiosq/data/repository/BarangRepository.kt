@@ -6,7 +6,9 @@ import com.kiosq.data.entity.Barang
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class BarangRepository(private val barangDao: BarangDao) {
+class BarangRepository(
+    private val barangDao: BarangDao
+) {
 
     val allBarang: LiveData<List<Barang>> = barangDao.getAllBarang()
     val allKategori: LiveData<List<String>> = barangDao.getAllKategori()
@@ -15,8 +17,13 @@ class BarangRepository(private val barangDao: BarangDao) {
     val stokRendah: LiveData<List<Barang>> = barangDao.getStokRendah()
     val totalNilaiStok: LiveData<Long> = barangDao.getTotalNilaiStok()
 
-    fun searchBarang(query: String): LiveData<List<Barang>> = barangDao.searchBarang(query)
-    fun getByKategori(kategori: String): LiveData<List<Barang>> = barangDao.getBarangByKategori(kategori)
+    fun searchBarang(query: String): LiveData<List<Barang>> {
+        return barangDao.searchBarang(query)
+    }
+
+    fun getByKategori(kategori: String): LiveData<List<Barang>> {
+        return barangDao.getBarangByKategori(kategori)
+    }
 
     suspend fun getAllBarangList(): List<Barang> = withContext(Dispatchers.IO) {
         barangDao.getAllBarangList()
@@ -31,7 +38,9 @@ class BarangRepository(private val barangDao: BarangDao) {
     }
 
     suspend fun updateBarang(barang: Barang) = withContext(Dispatchers.IO) {
-        barangDao.updateBarang(barang.copy(updatedAt = System.currentTimeMillis()))
+        barangDao.updateBarang(
+            barang.copy(updatedAt = System.currentTimeMillis())
+        )
     }
 
     suspend fun deleteBarang(barang: Barang) = withContext(Dispatchers.IO) {
@@ -39,11 +48,19 @@ class BarangRepository(private val barangDao: BarangDao) {
     }
 
     suspend fun kurangiStok(id: Long, qty: Int) = withContext(Dispatchers.IO) {
-        barangDao.kurangiStok(id, qty)
+        barangDao.kurangiStok(
+            id = id,
+            qty = qty,
+            now = System.currentTimeMillis()
+        )
     }
 
     suspend fun tambahStok(id: Long, qty: Int) = withContext(Dispatchers.IO) {
-        barangDao.tambahStok(id, qty)
+        barangDao.tambahStok(
+            id = id,
+            qty = qty,
+            now = System.currentTimeMillis()
+        )
     }
 
     suspend fun deleteAllBarang() = withContext(Dispatchers.IO) {

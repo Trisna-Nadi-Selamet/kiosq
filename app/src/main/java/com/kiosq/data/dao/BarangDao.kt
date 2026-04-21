@@ -14,7 +14,7 @@ interface BarangDao {
     suspend fun getAllBarangList(): List<Barang>
 
     @Query("SELECT * FROM barang WHERE id = :id")
-    suspend fun getBarangById(id: Long): Barang
+    suspend fun getBarangById(id: Long): Barang?
 
     @Query("SELECT * FROM barang WHERE nama LIKE '%' || :query || '%' OR kategori LIKE '%' || :query || '%' ORDER BY nama ASC")
     fun searchBarang(query: String): LiveData<List<Barang>>
@@ -37,7 +37,7 @@ interface BarangDao {
     @Query("SELECT COUNT(*) FROM barang")
     fun countAllBarang(): LiveData<Int>
 
-    @Query("SELECT SUM(jumlah * hargaModal) FROM barang")
+    @Query("SELECT COALESCE(SUM(jumlah * hargaModal), 0) FROM barang")
     fun getTotalNilaiStok(): LiveData<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -47,10 +47,18 @@ interface BarangDao {
     suspend fun updateBarang(barang: Barang)
 
     @Query("UPDATE barang SET jumlah = jumlah - :qty, updatedAt = :now WHERE id = :id")
-    suspend fun kurangiStok(id: Long, qty: Int, now: Long = System.currentTimeMillis())
+    suspend fun kurangiStok(
+        id: Long,
+        qty: Int,
+        now: Long = System.currentTimeMillis()
+    )
 
     @Query("UPDATE barang SET jumlah = jumlah + :qty, updatedAt = :now WHERE id = :id")
-    suspend fun tambahStok(id: Long, qty: Int, now: Long = System.currentTimeMillis())
+    suspend fun tambahStok(
+        id: Long,
+        qty: Int,
+        now: Long = System.currentTimeMillis()
+    )
 
     @Delete
     suspend fun deleteBarang(barang: Barang)

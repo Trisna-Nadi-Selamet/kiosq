@@ -13,8 +13,8 @@ import java.io.File
 class BarangViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: BarangRepository
-    private val _searchQuery = MutableLiveData<String>("")
-    private val _selectedKategori = MutableLiveData<String>()
+    private val _searchQuery = MutableLiveData("")
+    private val _selectedKategori = MutableLiveData<String?>(null)
 
     val allBarang: LiveData<List<Barang>>
     val allKategori: LiveData<List<String>>
@@ -23,27 +23,13 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
     val stokRendah: LiveData<List<Barang>>
     val totalNilaiStok: LiveData<Long>
 
-    val filteredBarang: LiveData<List<Barang>> = MediatorLiveData<List<Barang>>().apply {
-        var allList = emptyList<Barang>()
-        var query = ""
-        var kategori: String = null
-
-        fun filterAndPost() {
-            val filtered = allList.filter { b ->
-                val matchQuery = if (query.isBlank()) true
-                else b.nama.contains(query, true) || b.kategori.contains(query, true)
-                val matchKategori = if (kategori == null) true else b.kategori == kategori
-                matchQuery && matchKategori
-            }
-            postValue(filtered)
-        }
-    }
-
     private val _operationResult = MutableLiveData<String>()
     val operationResult: LiveData<String> = _operationResult
 
     private val _exportFile = MutableLiveData<File>()
     val exportFile: LiveData<File> = _exportFile
+
+    val filteredBarang: LiveData<List<Barang>>
 
     init {
         val db = KiosQDatabase.getInstance(application)
@@ -56,29 +42,51 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
         stokRendah = repository.stokRendah
         totalNilaiStok = repository.totalNilaiStok
 
-        (filteredBarang as MediatorLiveData).apply {
-            var allList = emptyList<Barang>()
-            var query = ""
-            var kategori: String = null
+        filteredBarang = MediatorLiveData<List<Barang>>().apply {
+
+            var allList: List<Barang> = emptyList()
+            var query: String = ""
+            var kategori: String? = null
 
             fun filterAndPost() {
                 val filtered = allList.filter { b ->
-                    val mQ = if (query.isBlank()) true
-                    else b.nama.contains(query, true) || b.kategori.contains(query, true)
-                    val mK = if (kategori == null) true else b.kategori == kategori
-                    mQ && mK
+                    val matchQuery =
+                        query.isBlank() ||
+                        b.nama.contains(query, true) ||
+                        b.kategori.contains(query, true)
+
+                    val matchKategori =
+                        kategori == null || b.kategori == kategori
+
+                    matchQuery && matchKategori
                 }
                 postValue(filtered)
             }
 
-            addSource(allBarang) { list -> allList = list; filterAndPost() }
-            addSource(_searchQuery) { q -> query = q; filterAndPost() }
-            addSource(_selectedKategori) { k -> kategori = k; filterAndPost() }
+            addSource(allBarang) { list ->
+                allList = list
+                filterAndPost()
+            }
+
+            addSource(_searchQuery) { q ->
+                query = q
+                filterAndPost()
+            }
+
+            addSource(_selectedKategori) { k ->
+                kategori = k
+                filterAndPost()
+            }
         }
     }
 
-    fun search(query: String) { _searchQuery.value = query }
-    fun filterByKategori(kategori: String) { _selectedKategori.value = kategori }
+    fun search(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun filterByKategori(kategori: String?) {
+        _selectedKategori.value = kategori
+    }
 
     fun insertBarang(barang: Barang) = viewModelScope.launch {
         repository.insertBarang(barang)
@@ -98,6 +106,7 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
     fun exportCsv() = viewModelScope.launch(Dispatchers.IO) {
         val list = repository.getAllBarangList()
         val result = FileHelper.exportBarangCsv(getApplication(), list)
+
         result.onSuccess { file ->
             _exportFile.postValue(file)
             _operationResult.postValue("Export berhasil: ${file.name}")
@@ -108,6 +117,7 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
 
     fun importCsv(onResult: (List<Barang>) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
         val result = FileHelper.importBarangCsv(getApplication())
+
         result.onSuccess { list ->
             list.forEach { repository.insertBarang(it) }
             _operationResult.postValue("Import ${list.size} barang berhasil")
@@ -118,6 +128,11 @@ class BarangViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun clearResult() { _operationResult.value = null }
-    fun clearExportFile() { _exportFile.value = null }
+    fun clearResult() {
+        _operationResult.value = null
+    }
+
+    fun clearExportFile() {
+        _exportFile.value = null
+    }
 }

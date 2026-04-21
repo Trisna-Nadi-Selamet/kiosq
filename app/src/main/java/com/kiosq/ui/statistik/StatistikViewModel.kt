@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.kiosq.data.database.KiosQDatabase
 import com.kiosq.data.entity.Barang
-import com.kiosq.data.entity.Transaksi
 import com.kiosq.data.repository.BarangRepository
 import com.kiosq.data.repository.TransaksiRepository
 import kotlinx.coroutines.launch
@@ -23,7 +22,6 @@ class StatistikViewModel(application: Application) : AndroidViewModel(applicatio
     val stokRendah: LiveData<List<Barang>>
     val countStokRendah: LiveData<Int>
 
-    // Pendapatan hari ini
     val pendapatanHariIni: LiveData<Long>
 
     private val _top5Terlaris = MutableLiveData<List<Pair<String, Int>>>()
@@ -34,14 +32,18 @@ class StatistikViewModel(application: Application) : AndroidViewModel(applicatio
         barangRepo = BarangRepository(db.barangDao())
         transaksiRepo = TransaksiRepository(db.transaksiDao())
 
+        // === Barang stats
         countBarang = barangRepo.countBarang
         totalNilaiStok = barangRepo.totalNilaiStok
-        totalPendapatan = transaksiRepo.totalPendapatan
-        totalTransaksi = transaksiRepo.totalTransaksiJual
-        barangTerlaris = transaksiRepo.barangTerlaris
         stokRendah = barangRepo.stokRendah
         countStokRendah = barangRepo.countStokRendah
 
+        // === Transaksi stats
+        totalPendapatan = transaksiRepo.totalPendapatan
+        totalTransaksi = transaksiRepo.totalTransaksiJual
+        barangTerlaris = transaksiRepo.barangTerlaris
+
+        // === Hari ini
         val todayStart = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -55,7 +57,12 @@ class StatistikViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadTop5() = viewModelScope.launch {
-        val list = transaksiRepo.getTop5Terlaris()
-        _top5Terlaris.postValue(list.map { it.namaBarang to it.totalJual })
+        val result = transaksiRepo.getTop5Terlaris()
+
+        _top5Terlaris.postValue(
+            result.map {
+                it.namaBarang to it.totalJual
+            }
+        )
     }
 }
