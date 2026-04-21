@@ -15,16 +15,39 @@ enum class JenisTransaksi {
 }
 
 // =========================
+// TYPE CONVERTER
+// =========================
+class TransaksiConverter {
+
+    @TypeConverter
+    fun fromJenis(value: JenisTransaksi): String {
+        return value.name
+    }
+
+    @TypeConverter
+    fun toJenis(value: String): JenisTransaksi {
+        return try {
+            JenisTransaksi.valueOf(value)
+        } catch (e: Exception) {
+            JenisTransaksi.JUAL
+        }
+    }
+}
+
+// =========================
 // ENTITY TRANSAKSI
 // =========================
 @Entity(tableName = "transaksi")
+@TypeConverters(TransaksiConverter::class)
 data class Transaksi(
+
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
     val barangId: Long,
     val namaBarang: String,
 
+    // ENUM tetap, tapi aman via converter
     val jenis: JenisTransaksi,
 
     val jumlah: Int,
@@ -48,19 +71,3 @@ data class TransaksiWithBarang(
     )
     val barang: Barang
 )
-
-// =========================
-// TYPE CONVERTER (ENUM)
-// =========================
-class TransaksiConverter {
-
-    @TypeConverter
-    fun fromJenis(value: JenisTransaksi): String {
-        return value.name
-    }
-
-    @TypeConverter
-    fun toJenis(value: String): JenisTransaksi {
-        return JenisTransaksi.valueOf(value)
-    }
-}

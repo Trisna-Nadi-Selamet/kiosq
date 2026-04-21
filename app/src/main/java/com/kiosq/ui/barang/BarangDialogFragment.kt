@@ -62,6 +62,7 @@ class BarangDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // FIX: lebih aman enum → string
         val satuanList = Satuan.values().map { it.name.lowercase() }
 
         val satuanAdapter = ArrayAdapter(
@@ -69,12 +70,14 @@ class BarangDialogFragment : DialogFragment() {
             android.R.layout.simple_spinner_item,
             satuanList
         )
+
         satuanAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerSatuan.adapter = satuanAdapter
 
         val args = arguments
 
         if (args != null) {
+
             existingBarang = Barang(
                 id = args.getLong(ARG_BARANG_ID),
                 nama = args.getString(ARG_NAMA, ""),
@@ -86,13 +89,18 @@ class BarangDialogFragment : DialogFragment() {
             )
 
             binding.tvDialogTitle.text = "Edit Barang"
-            binding.etNama.setText(existingBarang?.nama ?: "")
-            binding.etKategori.setText(existingBarang?.kategori ?: "")
-            binding.etJumlah.setText(existingBarang?.jumlah.toString())
-            binding.etHargaJual.setText(existingBarang?.hargaJual.toString())
-            binding.etHargaModal.setText(existingBarang?.hargaModal.toString())
 
-            val idx = satuanList.indexOf(existingBarang?.satuan?.lowercase())
+            // FIX null safety aman
+            binding.etNama.setText(existingBarang?.nama.orEmpty())
+            binding.etKategori.setText(existingBarang?.kategori.orEmpty())
+            binding.etJumlah.setText(existingBarang?.jumlah?.toString() ?: "0")
+            binding.etHargaJual.setText(existingBarang?.hargaJual?.toString() ?: "0")
+            binding.etHargaModal.setText(existingBarang?.hargaModal?.toString() ?: "0")
+
+            val idx = satuanList.indexOf(
+                existingBarang?.satuan?.lowercase() ?: ""
+            )
+
             if (idx >= 0) binding.spinnerSatuan.setSelection(idx)
 
         } else {
@@ -104,6 +112,7 @@ class BarangDialogFragment : DialogFragment() {
     }
 
     private fun saveBarang() {
+
         val nama = binding.etNama.text.toString().trim()
         val kategori = binding.etKategori.text.toString().trim()
         val jumlahStr = binding.etJumlah.text.toString().trim()

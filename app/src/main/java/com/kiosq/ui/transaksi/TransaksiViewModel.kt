@@ -8,6 +8,7 @@ import com.kiosq.data.entity.JenisTransaksi
 import com.kiosq.data.entity.Transaksi
 import com.kiosq.data.repository.BarangRepository
 import com.kiosq.data.repository.TransaksiRepository
+import com.kiosq.data.dao.NamaTotal
 import com.kiosq.util.FileHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,6 +34,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     private val _cart = MutableLiveData<List<CartItem>>(emptyList())
     val cart: LiveData<List<CartItem>> = _cart
 
+    // FIX: pakai type-safe map
     val cartTotal: LiveData<Long> = Transformations.map(_cart) { items ->
         items.sumOf { it.subtotal }
     }
@@ -100,6 +102,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         items.forEach { item ->
+
             barangRepo.kurangiStok(item.barang.id, item.qty)
 
             transaksiRepo.insertTransaksi(

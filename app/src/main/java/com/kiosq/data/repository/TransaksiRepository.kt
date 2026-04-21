@@ -1,9 +1,9 @@
 package com.kiosq.data.repository
 
 import androidx.lifecycle.LiveData
-import com.kiosq.data.dao.NamaTotal
 import com.kiosq.data.dao.TransaksiDao
 import com.kiosq.data.entity.Transaksi
+import com.kiosq.data.model.NamaTotal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,13 +17,15 @@ class TransaksiRepository(
     val transaksiJual: LiveData<List<Transaksi>> =
         transaksiDao.getTransaksiJual()
 
-    val totalPendapatan: LiveData<Long> =
+    // FIX: SUM bisa null dari Room
+    val totalPendapatan: LiveData<Long?> =
         transaksiDao.getTotalPendapatan()
 
     val totalTransaksiJual: LiveData<Int> =
         transaksiDao.getTotalTransaksiJual()
 
-    val barangTerlaris: LiveData<String> =
+    // FIX: sesuai DAO terbaru
+    val barangTerlaris: LiveData<List<NamaTotal>> =
         transaksiDao.getBarangTerlaris()
 
     val countAllTransaksi: LiveData<Int> =
@@ -38,7 +40,7 @@ class TransaksiRepository(
 
     fun getTotalPendapatanSince(
         startMillis: Long
-    ): LiveData<Long> {
+    ): LiveData<Long?> {
         return transaksiDao.getTotalPendapatanSince(startMillis)
     }
 

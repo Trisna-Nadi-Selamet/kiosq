@@ -29,13 +29,13 @@ object FileHelper {
             runCatching {
                 val dir = getOutputDir(context)
                 val file = File(dir, "kiosq_barang.csv")
+
                 FileWriter(file).use { writer ->
                     writer.appendLine("id,nama,kategori,jumlah,satuan,harga_jual,harga_modal,created_at")
+
                     barangList.forEach { b ->
                         writer.appendLine(
-                            "${b.id},\"${b.nama}\",\"${b.kategori}\",${b.jumlah},${b.satuan},${b.hargaJual},${b.hargaModal},${
-                                formatDate(b.createdAt)
-                            }"
+                            "${b.id},\"${b.nama}\",\"${b.kategori}\",${b.jumlah},${b.satuan},${b.hargaJual},${b.hargaModal},${b.createdAt}"
                         )
                     }
                 }
@@ -49,13 +49,13 @@ object FileHelper {
             runCatching {
                 val dir = getOutputDir(context)
                 val file = File(dir, "kiosq_transaksi.csv")
+
                 FileWriter(file).use { writer ->
                     writer.appendLine("id,barang_id,nama_barang,jenis,jumlah,harga_satuan,total,catatan,tanggal")
+
                     transaksiList.forEach { t ->
                         writer.appendLine(
-                            "${t.id},${t.barangId},\"${t.namaBarang}\",${t.jenis},${t.jumlah},${t.hargaSatuan},${t.total},\"${t.catatan}\",${
-                                formatDate(t.createdAt)
-                            }"
+                            "${t.id},${t.barangId},\"${t.namaBarang}\",${t.jenis},${t.jumlah},${t.hargaSatuan},${t.total},\"${t.catatan}\",${t.createdAt}"
                         )
                     }
                 }
@@ -71,13 +71,12 @@ object FileHelper {
                 if (!file.exists()) throw Exception("File kiosq_barang.csv tidak ditemukan")
 
                 val result = mutableListOf<Barang>()
-                var lineNumber = 0
+
                 FileReader(file).buffered().use { reader ->
-                    reader.lineSequence().forEach { line ->
-                        lineNumber++
-                        if (lineNumber == 1) return@forEach // skip header
+                    reader.lineSequence().drop(1).forEachIndexed { index, line ->
                         try {
                             val cols = parseCsvLine(line)
+
                             if (cols.size >= 7) {
                                 result.add(
                                     Barang(
@@ -91,11 +90,11 @@ object FileHelper {
                                 )
                             }
                         } catch (e: Exception) {
-                            Log.w(TAG, "Skip baris invalid #$lineNumber: ${e.message}")
-                            // skip baris rusak, jangan crash
+                            Log.w(TAG, "Skip baris error: ${e.message}")
                         }
                     }
                 }
+
                 result
             }
         }
@@ -105,22 +104,26 @@ object FileHelper {
         context: Context,
         barangList: List<Barang>,
         transaksiList: List<Transaksi>
-    ): Result<File> = withContext(Dispatchers.IO) {
-        runCatching {
-            val dir = getOutputDir(context)
-            val file = File(dir, "backup.json")
-            val backup = BackupData(
-                version = 1,
-                tanggal = formatDate(System.currentTimeMillis()),
-                barang = barangList,
-                transaksi = transaksiList
-            )
-            FileWriter(file).use { writer ->
-                gson.toJson(backup, writer)
+    ): Result<File> =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val dir = getOutputDir(context)
+                val file = File(dir, "backup.json")
+
+                val backup = BackupData(
+                    version = 1,
+                    tanggal = formatDate(System.currentTimeMillis()),
+                    barang = barangList,
+                    transaksi = transaksiList
+                )
+
+                FileWriter(file).use { writer ->
+                    gson.toJson(backup, writer)
+                }
+
+                file
             }
-            file
         }
-    }
 
     // ─── RESTORE JSON ─────────────────────────────────────────────────────
     suspend fun restoreJson(context: Context): Result<BackupData> =
@@ -128,9 +131,10 @@ object FileHelper {
             runCatching {
                 val file = File(getOutputDir(context), "backup.json")
                 if (!file.exists()) throw Exception("File backup.json tidak ditemukan")
+
                 FileReader(file).use { reader ->
                     gson.fromJson(reader, BackupData::class.java)
-                        ?: throw Exception("Format backup tidak valid")
+                        ?: throw Exception("Data backup invalid")
                 }
             }
         }
@@ -142,16 +146,18 @@ object FileHelper {
             "${context.packageName}.fileprovider",
             file
         )
+
         return Intent(Intent.ACTION_SEND).apply {
             type = mimeType
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, "Export Kios Q - ${file.name}")
+            putExtra(Intent.EXTRA_SUBJECT, "Export KiosQ - ${file.name}")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }
 
     fun getFileInfo(context: Context, fileName: String): FileInfo? {
         val file = File(getOutputDir(context), fileName)
+
         return if (file.exists()) {
             FileInfo(
                 nama = file.name,
@@ -170,7 +176,8 @@ object FileHelper {
     }
 
     private fun formatDate(millis: Long): String {
-        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(millis))
+        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            .format(Date(millis))
     }
 
     private fun formatFileSize(bytes: Long): String {
@@ -185,6 +192,7 @@ object FileHelper {
         val result = mutableListOf<String>()
         var inQuotes = false
         val current = StringBuilder()
+
         for (ch in line) {
             when {
                 ch == '"' -> inQuotes = !inQuotes
@@ -195,11 +203,13 @@ object FileHelper {
                 else -> current.append(ch)
             }
         }
+
         result.add(current.toString())
         return result
     }
 }
 
+// ================= DATA =================
 data class BackupData(
     val version: Int,
     val tanggal: String,

@@ -1,6 +1,7 @@
 package com.kiosq.data.repository
 
 import androidx.lifecycle.LiveData
+import com.kiosq.data.dao.BarangDao
 import com.kiosq.data.entity.Barang
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,8 +13,12 @@ class BarangRepository(
     val allBarang: LiveData<List<Barang>> = barangDao.getAllBarang()
     val allKategori: LiveData<List<String>> = barangDao.getAllKategori()
     val countBarang: LiveData<Int> = barangDao.countAllBarang()
-    val countStokRendah: LiveData<Int> = barangDao.countStokRendah()
-    val stokRendah: LiveData<List<Barang>> = barangDao.getStokRendah()
+
+    // FIX: wajib kirim parameter (batas default)
+    val countStokRendah: LiveData<Int> = barangDao.countStokRendah(10)
+
+    val stokRendah: LiveData<List<Barang>> = barangDao.getStokRendah(10)
+
     val totalNilaiStok: LiveData<Long> = barangDao.getTotalNilaiStok()
 
     fun searchBarang(query: String): LiveData<List<Barang>> {
@@ -28,7 +33,8 @@ class BarangRepository(
         barangDao.getAllBarangList()
     }
 
-    suspend fun getBarangById(id: Long): Barang = withContext(Dispatchers.IO) {
+    // FIX: nullable safety (DAO bisa null)
+    suspend fun getBarangById(id: Long): Barang? = withContext(Dispatchers.IO) {
         barangDao.getBarangById(id)
     }
 

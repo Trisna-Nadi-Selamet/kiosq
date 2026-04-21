@@ -85,7 +85,6 @@ class TransaksiAdapter :
             }
 
             binding.tvJenis.setTextColor(color)
-
             binding.chipJenis.text = t.jenis
         }
     }

@@ -25,7 +25,11 @@ class SatuanConverter {
 
     @TypeConverter
     fun toSatuan(value: String): Satuan {
-        return Satuan.valueOf(value)
+        return try {
+            Satuan.valueOf(value)
+        } catch (e: Exception) {
+            Satuan.PCS
+        }
     }
 }
 
@@ -43,7 +47,7 @@ data class Barang(
     val kategori: String,
     val jumlah: Int,
 
-    // 🔥 FIX: pakai ENUM (lebih aman & clean)
+    // tetap ENUM (aman untuk Room + converter)
     val satuan: Satuan,
 
     val hargaJual: Long,

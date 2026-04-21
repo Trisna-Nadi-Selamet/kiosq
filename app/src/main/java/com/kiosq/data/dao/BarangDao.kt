@@ -16,7 +16,12 @@ interface BarangDao {
     @Query("SELECT * FROM barang WHERE id = :id")
     suspend fun getBarangById(id: Long): Barang?
 
-    @Query("SELECT * FROM barang WHERE nama LIKE '%' || :query || '%' OR kategori LIKE '%' || :query || '%' ORDER BY nama ASC")
+    @Query("""
+        SELECT * FROM barang 
+        WHERE nama LIKE '%' || :query || '%' 
+        OR kategori LIKE '%' || :query || '%' 
+        ORDER BY nama ASC
+    """)
     fun searchBarang(query: String): LiveData<List<Barang>>
 
     @Query("SELECT * FROM barang WHERE kategori = :kategori ORDER BY nama ASC")
@@ -29,10 +34,10 @@ interface BarangDao {
     suspend fun getAllKategoriList(): List<String>
 
     @Query("SELECT * FROM barang WHERE jumlah <= :batasMinimum ORDER BY jumlah ASC")
-    fun getStokRendah(batasMinimum: Int ): LiveData<List<Barang>>
+    fun getStokRendah(batasMinimum: Int): LiveData<List<Barang>>
 
     @Query("SELECT COUNT(*) FROM barang WHERE jumlah <= :batasMinimum")
-    fun countStokRendah(batasMinimum: Int ): LiveData<Int>
+    fun countStokRendah(batasMinimum: Int): LiveData<Int>
 
     @Query("SELECT COUNT(*) FROM barang")
     fun countAllBarang(): LiveData<Int>
@@ -46,18 +51,19 @@ interface BarangDao {
     @Update
     suspend fun updateBarang(barang: Barang)
 
+    // FIX: HAPUS DEFAULT PARAMETER (ROOM TIDAK SUPPORT DEFAULT FUNCTION VALUE)
     @Query("UPDATE barang SET jumlah = jumlah - :qty, updatedAt = :now WHERE id = :id")
     suspend fun kurangiStok(
         id: Long,
         qty: Int,
-        now: Long = System.currentTimeMillis()
+        now: Long
     )
 
     @Query("UPDATE barang SET jumlah = jumlah + :qty, updatedAt = :now WHERE id = :id")
     suspend fun tambahStok(
         id: Long,
         qty: Int,
-        now: Long = System.currentTimeMillis()
+        now: Long
     )
 
     @Delete

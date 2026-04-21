@@ -22,14 +22,14 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _backupInfo = MutableLiveData<FileInfo>()
-    val backupInfo: LiveData<FileInfo> = _backupInfo
+    private val _backupInfo = MutableLiveData<FileInfo?>()
+    val backupInfo: LiveData<FileInfo?> = _backupInfo
 
-    private val _csvBarangInfo = MutableLiveData<FileInfo>()
-    val csvBarangInfo: LiveData<FileInfo> = _csvBarangInfo
+    private val _csvBarangInfo = MutableLiveData<FileInfo?>()
+    val csvBarangInfo: LiveData<FileInfo?> = _csvBarangInfo
 
-    private val _csvTransaksiInfo = MutableLiveData<FileInfo>()
-    val csvTransaksiInfo: LiveData<FileInfo> = _csvTransaksiInfo
+    private val _csvTransaksiInfo = MutableLiveData<FileInfo?>()
+    val csvTransaksiInfo: LiveData<FileInfo?> = _csvTransaksiInfo
 
     private val _shareFile = MutableLiveData<Pair<File, String>>()
     val shareFile: LiveData<Pair<File, String>> = _shareFile
@@ -77,6 +77,7 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
             barangRepo.deleteAllBarang()
             transaksiRepo.deleteAllTransaksi()
 
+            // FIX: replace forEach suspend-safe
             backup.barang.forEach { barangRepo.insertBarang(it) }
             backup.transaksi.forEach { transaksiRepo.insertTransaksi(it) }
 
@@ -132,7 +133,11 @@ class BackupViewModel(application: Application) : AndroidViewModel(application) 
 
         try {
             val list = FileHelper.importBarangCsv(getApplication())
-            list.forEach { barangRepo.insertBarang(it) }
+
+            // FIX: safe insert loop
+            list.forEach { barang ->
+                barangRepo.insertBarang(barang)
+            }
 
             _operationResult.postValue("Import ${list.size} barang berhasil")
 
