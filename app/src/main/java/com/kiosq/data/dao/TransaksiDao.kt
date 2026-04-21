@@ -44,14 +44,13 @@ interface TransaksiDao {
     fun getTotalTransaksiJual(): LiveData<Int>
 
     @Query("""
-        SELECT namaBarang, SUM(jumlah) as totalJual 
-        FROM transaksi 
-        WHERE jenis = 'JUAL' 
-        GROUP BY namaBarang 
-        ORDER BY totalJual DESC 
-        LIMIT 1
-    """)
-    fun getBarangTerlaris(): LiveData<String?>
+    SELECT namaBarang 
+    FROM transaksi 
+    GROUP BY namaBarang 
+    ORDER BY SUM(jumlah) DESC 
+    LIMIT 1
+""")
+fun getBarangTerlaris(): LiveData<String>
 
     @Query("""
         SELECT namaBarang, SUM(jumlah) as totalJual 
