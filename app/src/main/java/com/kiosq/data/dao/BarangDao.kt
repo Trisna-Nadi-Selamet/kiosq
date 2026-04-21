@@ -29,10 +29,10 @@ interface `BarangDao.kt` {
     suspend fun getAllKategoriList(): List<String>
 
     @Query("SELECT * FROM barang WHERE jumlah <= :batasMinimum ORDER BY jumlah ASC")
-    fun getStokRendah(batasMinimum: Int = 5): LiveData<List<Barang>>
+    fun getStokRendah(batasMinimum: Int ): LiveData<List<Barang>>
 
     @Query("SELECT COUNT(*) FROM barang WHERE jumlah <= :batasMinimum")
-    fun countStokRendah(batasMinimum: Int = 5): LiveData<Int>
+    fun countStokRendah(batasMinimum: Int ): LiveData<Int>
 
     @Query("SELECT COUNT(*) FROM barang")
     fun countAllBarang(): LiveData<Int>
