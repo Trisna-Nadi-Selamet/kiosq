@@ -15,13 +15,13 @@ import com.kiosq.data.entity.Transaksi
 )
 abstract class KiosQDatabase : RoomDatabase() {
 
-    abstract fun barangDao(): `BarangDao.kt`
+    abstract fun barangDao(): BarangDao
     abstract fun transaksiDao(): TransaksiDao
 
     companion object {
 
         @Volatile
-        private var INSTANCE: KiosQDatabase? = null
+        private var INSTANCE: KiosQDatabase = null
 
         fun getInstance(context: Context): KiosQDatabase {
             return INSTANCE ?: synchronized(this) {
