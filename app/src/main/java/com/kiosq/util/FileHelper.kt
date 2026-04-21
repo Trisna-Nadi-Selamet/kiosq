@@ -83,7 +83,7 @@ object FileHelper {
                                         nama = cols[1].trim('"'),
                                         kategori = cols[2].trim('"'),
                                         jumlah = cols[3].toInt(),
-                                        satuan = cols[4],
+                                        satuan = Satuan.valueOf(cols[4]),
                                         hargaJual = cols[5].toLong(),
                                         hargaModal = cols[6].toLong()
                                     )

@@ -34,9 +34,8 @@ class BarangRepository(
     }
 
     // FIX: nullable safety (DAO bisa null)
-    suspend fun getBarangById(id: Long): Barang? = withContext(Dispatchers.IO) {
-        barangDao.getBarangById(id)
-    }
+    suspend fun getBarangById(id: Long): Barang? =
+    barangDao.getBarangById(id)
 
     suspend fun insertBarang(barang: Barang): Long = withContext(Dispatchers.IO) {
         barangDao.insertBarang(barang)

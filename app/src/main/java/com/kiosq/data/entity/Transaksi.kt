@@ -40,16 +40,10 @@ class TransaksiConverter {
 @Entity(tableName = "transaksi")
 @TypeConverters(TransaksiConverter::class)
 data class Transaksi(
-
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val barangId: Long,
     val namaBarang: String,
-
-    // ENUM tetap, tapi aman via converter
     val jenis: JenisTransaksi,
-
     val jumlah: Int,
     val hargaSatuan: Long,
     val total: Long,

@@ -14,15 +14,14 @@ import com.kiosq.data.entity.Transaksi
     version = 1,
     exportSchema = false
 )
+@TypeConverters(SatuanConverter::class, TransaksiConverter::class)
 abstract class KiosQDatabase : RoomDatabase() {
 
     abstract fun barangDao(): BarangDao
     abstract fun transaksiDao(): TransaksiDao
 
     companion object {
-
-        @Volatile
-        private var INSTANCE: KiosQDatabase? = null
+        @Volatile private var INSTANCE: KiosQDatabase? = null
 
         fun getInstance(context: Context): KiosQDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -30,8 +29,7 @@ abstract class KiosQDatabase : RoomDatabase() {
                     context.applicationContext,
                     KiosQDatabase::class.java,
                     "kiosq_database"
-                )
-                    .fallbackToDestructiveMigration()
+                ).fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance

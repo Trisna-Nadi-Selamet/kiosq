@@ -25,8 +25,8 @@ class TransaksiRepository(
         transaksiDao.getTotalTransaksiJual()
 
     // FIX: sesuai DAO terbaru
-    val barangTerlaris: LiveData<List<NamaTotal>> =
-        transaksiDao.getBarangTerlaris()
+    val barangTerlaris: LiveData<NamaTotal?> =
+    transaksiDao.getBarangTerlaris()
 
     val countAllTransaksi: LiveData<Int> =
         transaksiDao.countAllTransaksi()

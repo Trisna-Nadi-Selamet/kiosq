@@ -39,22 +39,16 @@ class SatuanConverter {
 @Entity(tableName = "barang")
 @TypeConverters(SatuanConverter::class)
 data class Barang(
-
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nama: String,
     val kategori: String,
     val jumlah: Int,
-
-    // tetap ENUM (aman untuk Room + converter)
     val satuan: Satuan,
-
     val hargaJual: Long,
     val hargaModal: Long,
-
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
+
 ) {
 
     val profit: Long
