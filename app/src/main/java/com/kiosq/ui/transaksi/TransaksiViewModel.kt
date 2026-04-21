@@ -51,7 +51,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun addToCart(barang: Barang, qty: Int, harga: Long) {
 
-        val current = _cart.value ?: emptyList()
+        val current = _cart.value : emptyList()
         val mutable = current.toMutableList()
 
         val index = mutable.indexOfFirst { it.barang.id == barang.id }
@@ -67,7 +67,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun removeFromCart(barangId: Long) {
-        _cart.value = _cart.value?.filter { it.barang.id != barangId } ?: emptyList()
+        _cart.value = _cart.value.filter { it.barang.id != barangId } : emptyList()
     }
 
     fun clearCart() {
@@ -76,7 +76,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun prosesJual() = viewModelScope.launch {
 
-        val items = _cart.value ?: emptyList()
+        val items = _cart.value : emptyList()
 
         if (items.isEmpty()) {
             _operationResult.postValue("Keranjang kosong")

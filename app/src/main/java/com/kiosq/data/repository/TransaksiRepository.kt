@@ -23,7 +23,7 @@ class TransaksiRepository(
     val totalTransaksiJual: LiveData<Int> =
         transaksiDao.getTotalTransaksiJual()
 
-    val barangTerlaris: LiveData<String?> =
+    val barangTerlaris: LiveData<String> =
         transaksiDao.getBarangTerlaris()
 
     val countAllTransaksi: LiveData<Int> =

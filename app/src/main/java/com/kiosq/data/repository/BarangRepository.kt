@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class BarangRepository(
-    private val barangDao: `BarangDao.kt`
+    private val barangDao: BarangDao
 ) {
 
     val allBarang: LiveData<List<Barang>> = barangDao.getAllBarang()

@@ -11,11 +11,11 @@ import com.kiosq.util.CurrencyFormatter
 
 class BarangDialogFragment : DialogFragment() {
 
-    private var _binding: DialogBarangBinding? = null
+    private var _binding: DialogBarangBinding = null
     private val binding get() = _binding!!
 
-    var onSave: ((Barang) -> Unit)? = null
-    private var existingBarang: Barang? = null
+    var onSave: ((Barang) -> Unit) = null
+    private var existingBarang: Barang = null
 
     companion object {
         private const val ARG_BARANG_ID = "barang_id"
@@ -43,8 +43,8 @@ class BarangDialogFragment : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        container: ViewGroup,
+        savedInstanceState: Bundle
     ): View {
         _binding = DialogBarangBinding.inflate(inflater, container, false)
         return binding.root
@@ -52,13 +52,13 @@ class BarangDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(
+        dialog.window.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
         super.onViewCreated(view, savedInstanceState)
 
         val satuanList = Satuan.values().map { it.name.lowercase() }
@@ -85,13 +85,13 @@ class BarangDialogFragment : DialogFragment() {
             )
 
             binding.tvDialogTitle.text = "Edit Barang"
-            binding.etNama.setText(existingBarang?.nama ?: "")
-            binding.etKategori.setText(existingBarang?.kategori ?: "")
-            binding.etJumlah.setText(existingBarang?.jumlah.toString())
-            binding.etHargaJual.setText(existingBarang?.hargaJual.toString())
-            binding.etHargaModal.setText(existingBarang?.hargaModal.toString())
+            binding.etNama.setText(existingBarang.nama : "")
+            binding.etKategori.setText(existingBarang.kategori : "")
+            binding.etJumlah.setText(existingBarang.jumlah.toString())
+            binding.etHargaJual.setText(existingBarang.hargaJual.toString())
+            binding.etHargaModal.setText(existingBarang.hargaModal.toString())
 
-            val idx = satuanList.indexOf(existingBarang?.satuan?.lowercase())
+            val idx = satuanList.indexOf(existingBarang.satuan.lowercase())
             if (idx >= 0) binding.spinnerSatuan.setSelection(idx)
 
         } else {
@@ -117,16 +117,16 @@ class BarangDialogFragment : DialogFragment() {
         if (hargaModalStr.isBlank()) { binding.etHargaModal.error = "Harga modal wajib diisi"; return }
 
         val barang = Barang(
-            id = existingBarang?.id ?: 0,
+            id = existingBarang.id : 0,
             nama = nama,
             kategori = kategori,
-            jumlah = jumlahStr.toIntOrNull() ?: 0,
+            jumlah = jumlahStr.toIntOrNull() : 0,
             satuan = satuan,
-            hargaJual = hargaJualStr.toLongOrNull() ?: 0,
-            hargaModal = hargaModalStr.toLongOrNull() ?: 0
+            hargaJual = hargaJualStr.toLongOrNull() : 0,
+            hargaModal = hargaModalStr.toLongOrNull() : 0
         )
 
-        onSave?.invoke(barang)
+        onSave.invoke(barang)
         dismiss()
     }
 
