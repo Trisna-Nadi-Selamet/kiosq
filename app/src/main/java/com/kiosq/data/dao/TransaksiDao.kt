@@ -33,35 +33,46 @@ interface TransaksiDao {
     """)
     suspend fun getTransaksiByRangeList(startMillis: Long, endMillis: Long): List<Transaksi>
 
-    // Statistik queries
+    // =========================
+    // STATISTIK
+    // =========================
+
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL'")
-    fun getTotalPendapatan(): LiveData<Long>
+    fun getTotalPendapatan(): LiveData<Long?>
 
     @Query("SELECT SUM(total) FROM transaksi WHERE jenis = 'JUAL' AND createdAt >= :startMillis")
-    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long>
+    fun getTotalPendapatanSince(startMillis: Long): LiveData<Long?>
 
     @Query("SELECT COUNT(*) FROM transaksi WHERE jenis = 'JUAL'")
     fun getTotalTransaksiJual(): LiveData<Int>
 
-    @Query("""
-    SELECT namaBarang, SUM(jumlah) as totalJual 
-    FROM transaksi 
-    WHERE jenis = 'JUAL' 
-    GROUP BY namaBarang 
-    ORDER BY totalJual DESC 
-    LIMIT 1
-    """)
-    fun getBarangTerlaris(): LiveData<String>
+    // =========================
+    // TOP BARANG TERLARIS
+    // =========================
 
     @Query("""
-        SELECT namaBarang, SUM(jumlah) as totalJual 
-        FROM transaksi 
-        WHERE jenis = 'JUAL' 
-        GROUP BY namaBarang 
-        ORDER BY totalJual DESC 
+        SELECT namaBarang, SUM(jumlah) AS totalJual
+        FROM transaksi
+        WHERE jenis = 'JUAL'
+        GROUP BY namaBarang
+        ORDER BY totalJual DESC
+        LIMIT 1
+    """)
+    fun getBarangTerlaris(): LiveData<List<NamaTotal>>
+
+    @Query("""
+        SELECT namaBarang, SUM(jumlah) AS totalJual
+        FROM transaksi
+        WHERE jenis = 'JUAL'
+        GROUP BY namaBarang
+        ORDER BY totalJual DESC
         LIMIT 5
     """)
     suspend fun getTop5Terlaris(): List<NamaTotal>
+
+    // =========================
+    // CRUD
+    // =========================
 
     @Query("SELECT * FROM transaksi WHERE barangId = :barangId ORDER BY createdAt DESC")
     fun getTransaksiByBarang(barangId: Long): LiveData<List<Transaksi>>
@@ -81,6 +92,10 @@ interface TransaksiDao {
     @Query("DELETE FROM transaksi")
     suspend fun deleteAllTransaksi()
 }
+
+// =========================
+// DATA CLASS UNTUK QUERY
+// =========================
 
 data class NamaTotal(
     val namaBarang: String,
