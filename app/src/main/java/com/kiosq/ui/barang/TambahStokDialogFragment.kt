@@ -9,7 +9,7 @@ import com.kiosq.databinding.DialogTambahStokBinding
 
 class TambahStokDialogFragment : DialogFragment() {
 
-    private var _binding: DialogTambahStokBinding = null
+    private var _binding: DialogTambahStokBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: BarangViewModel by viewModels({ requireParentFragment() })
@@ -32,8 +32,8 @@ class TambahStokDialogFragment : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
-        container: ViewGroup,
-        savedInstanceState: Bundle
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = DialogTambahStokBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,16 +41,16 @@ class TambahStokDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog.window.setLayout(
+        dialog?.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val args = arguments : return
+        val args = arguments ?: return
 
         val id = args.getLong(ARG_ID)
         val nama = args.getString(ARG_NAMA).orEmpty()
@@ -71,7 +71,7 @@ class TambahStokDialogFragment : DialogFragment() {
             val updated = Barang(
                 id = id,
                 nama = nama,
-                kategori = "", // kalau mau aman nanti isi dari DB
+                kategori = "",
                 jumlah = stok + qty,
                 satuan = satuan,
                 hargaJual = 0,

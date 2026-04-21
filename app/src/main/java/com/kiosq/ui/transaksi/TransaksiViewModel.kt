@@ -20,9 +20,9 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
     val allBarang: LiveData<List<Barang>>
     val allTransaksi: LiveData<List<Transaksi>>
-    val totalPendapatan: LiveData<Long>
+    val totalPendapatan: LiveData<Long?>
     val totalTransaksi: LiveData<Int>
-    val barangTerlaris: LiveData<String>
+    val barangTerlaris: LiveData<List<NamaTotal>>
 
     private val _operationResult = MutableLiveData<String>()
     val operationResult: LiveData<String> = _operationResult
@@ -51,7 +51,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun addToCart(barang: Barang, qty: Int, harga: Long) {
 
-        val current = _cart.value : emptyList()
+        val current = _cart.value ?: emptyList()
         val mutable = current.toMutableList()
 
         val index = mutable.indexOfFirst { it.barang.id == barang.id }
@@ -67,7 +67,8 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun removeFromCart(barangId: Long) {
-        _cart.value = _cart.value.filter { it.barang.id != barangId } : emptyList()
+        val current = _cart.value ?: emptyList()
+        _cart.value = current.filter { it.barang.id != barangId }
     }
 
     fun clearCart() {
@@ -76,7 +77,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun prosesJual() = viewModelScope.launch {
 
-        val items = _cart.value : emptyList()
+        val items = _cart.value ?: emptyList()
 
         if (items.isEmpty()) {
             _operationResult.postValue("Keranjang kosong")
