@@ -5,7 +5,7 @@ import androidx.room.*
 import com.kiosq.data.entity.Barang
 
 @Dao
-interface `BarangDao.kt` {
+interface BarangDao {
 
     @Query("SELECT * FROM barang ORDER BY nama ASC")
     fun getAllBarang(): LiveData<List<Barang>>
