@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Kios Q</string>
-    <string name="offline_mode">Mode Offline Aktif</string>
-    <string name="nav_barang">Barang</string>
-    <string name="nav_transaksi">Transaksi</string>
-    <string name="nav_statistik">Statistik</string>
-    <string name="nav_backup">Backup</string>
-</resources>
